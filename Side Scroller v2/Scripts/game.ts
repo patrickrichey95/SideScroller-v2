@@ -14,7 +14,7 @@ var instructions: InstructionsMenu;
 var score;
 
 // Game Constants
-var ENEMY_NUM: number = 3;
+var ENEMY_NUM: number = 5;
 var GAME_FONT: string = "40px Consolas";
 var FONT_COLOUR: string = "#FFFFFF";
 var PLAYER_LIVES: number = 3;
@@ -93,7 +93,6 @@ class Coin {
         this.image.regY = this.height * 0.5;
         this.dx = 5;
         stage.addChild(this.image);
-        //this.reset();
     }
 
     reset() {
@@ -258,7 +257,7 @@ function collisionCheck() {
     }
 }
 
-///////////////////////////////// Game State Information /////////////////////////////////
+////////////////////////////// Game State Information /////////////////////////////////
 
 //function to create the start menu
 function startMenu() {
@@ -276,10 +275,6 @@ class Menu {
     titleImage: createjs.Bitmap;
     playImage: createjs.Bitmap;
     instructionsImage: createjs.Bitmap;
-    width: number;
-    height: number;
-    width2: number;
-    height2: number;
     constructor() {
         var titleImage = new createjs.Bitmap(queue.getResult("title"));
         titleImage.x = (stage.canvas.width/2) - (titleImage.image.width/2);
@@ -295,29 +290,88 @@ class Menu {
         var instructionImage = new createjs.Bitmap(queue.getResult("instruction"));
         instructionImage.x = (stage.canvas.width / 2) - (instructionImage.image.width / 2);
         instructionImage.y = (stage.canvas.height * 0.85) - (instructionImage.image.height / 2);
-        instructionImage.addEventListener("click", playButtonClicked);
+        instructionImage.addEventListener("click", instructionsClicked);
         stage.addChild(instructionImage);
 
         stage.update();
     }
 }
 
-function gameStart(): void {
+function playButtonClicked(event: MouseEvent) {
+    stage.removeAllChildren();
+    stage.removeAllEventListeners();
+    stage.enableMouseOver(20);
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", gameLoop);
+    gameStart();
+}
 
-    var point1: createjs.Point = new createjs.Point();
-    var point2: createjs.Point = new createjs.Point();
-
+function gameStart(): void {
     space = new Space();
     republicCoin = new Coin();
     player = new Player();
-   
     for (var count = 0; count < ENEMY_NUM; count++) {
         enemies[count] = new Enemy();
     }
-
     scoreboard = new Scoreboard();
+}
+
+class InstructionsMenu {
+    backImage: createjs.Bitmap;
+
+    label: createjs.Text;
+    label2: createjs.Text;
+    labelString: string = "INSTRUCTIONS";
+    labelString2: string = "THE GAME WORKS LIKE DIS";
+    width: number;
+    height: number;
+    width2: number;
+    height2: number;
+    constructor() {
+        var backImage = new createjs.Bitmap(queue.getResult("back"));
+        backImage.x = (stage.canvas.width / 2) - (backImage.image.width / 2);
+        backImage.y = (stage.canvas.height * 0.85) - (backImage.image.height / 2);
+        stage.addChild(backImage);
+
+        backImage.addEventListener("click", backClicked);
+
+
+        this.label = new createjs.Text(this.labelString, GAME_FONT, FONT_COLOUR);
+
+        this.width = this.label.getBounds().width;
+        this.height = this.label.getBounds().height;
+        this.label2 = new createjs.Text(this.labelString2, GAME_FONT, FONT_COLOUR);
+        this.width2 = this.label.getBounds().width;
+        this.height2 = this.label.getBounds().height;
+        stage.addChild(this.label);
+        this.label.x = 195;
+        this.label.y = 20;
+        stage.addChild(this.label2);
+        this.label2.x = 120;
+        this.label2.y = 70;
+        stage.update();
+    }
+
+}
+
+function instructionsClicked(event: MouseEvent) {
+    stage.cursor = "default";
+    createjs.Sound.stop();
+    stage.clear();
+    createjs.Sound.play("BG");
+    space = new Space();
+    instructions = new InstructionsMenu();
+    stage.update();
+}
+
+function backClicked(event: MouseEvent) {
+    stage.cursor = "default";
+    createjs.Sound.stop();
+    stage.clear();
+    createjs.Sound.play("BG");
+    space = new Space();
+    mainMenu = new startMenu();
+    stage.update();
 }
 
 class GameOver {
@@ -350,58 +404,4 @@ class GameOver {
         this.label2.y = 70;
         stage.update();
     }
-
-}
-
-class InstructionsMenu {
-    label: createjs.Text;
-    label2: createjs.Text;
-    labelString: string = "INSTRUCTIONS";
-    labelString2: string = "THE GAME WORKS LIKE DIS";
-    width: number;
-    height: number;
-    width2: number;
-    height2: number;
-    constructor() {
-        this.label = new createjs.Text(this.labelString, GAME_FONT, FONT_COLOUR);
-
-        this.width = this.label.getBounds().width;
-        this.height = this.label.getBounds().height;
-        this.label2 = new createjs.Text(this.labelString2, GAME_FONT, FONT_COLOUR);
-        this.width2 = this.label.getBounds().width;
-        this.height2 = this.label.getBounds().height;
-        var backButton = new createjs.Bitmap("images/back.png");
-        stage.addChild(backButton);
-        backButton.x = 250;
-        backButton.y = 400;
-        backButton.addEventListener("click", startMenu);
-        stage.addChild(this.label);
-        this.label.x = 195;
-        this.label.y = 20;
-        stage.addChild(this.label2);
-        this.label2.x = 120;
-        this.label2.y = 70;
-        stage.update();
-    }
-
-}
-function instructionsClicked(event: MouseEvent) {
-    // Instantiate Game Objects
-    stage.cursor = "default";
-    createjs.Sound.stop();
-    stage.clear();
-    createjs.Sound.play("BG");
-    instructions = new InstructionsMenu();
-    space = new Space();
-    instructions = new InstructionsMenu();
-    stage.update();
-}
-
-function playButtonClicked(event: MouseEvent) {
-    stage.removeAllChildren();
-    stage.removeAllEventListeners();
-    stage.enableMouseOver(20);
-    createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", gameLoop);
-    gameStart();
 }
