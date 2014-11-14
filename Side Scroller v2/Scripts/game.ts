@@ -242,7 +242,7 @@ function playerAndEnemy(interceptor:Enemy) {
     point2.y = interceptor.image.y;
 
     if (distance(point1, point2) < ((player.height * 0.5) + (interceptor.height * 0.5))) {
-        createjs.Sound.play("thunder");
+        //createjs.Sound.play("thunder");
         interceptor.reset();
         scoreboard.lives -= 1;
         if (scoreboard.lives == 0) {
@@ -265,10 +265,10 @@ function collisionCheck() {
 
 //function to create the start menu
 function startMenu() {
-    stage.cursor = "default";
-    createjs.Sound.stop();
+    stage.cursor = 'default';
+    //createjs.Sound.stop();
     stage.clear();
-    createjs.Sound.play("BG");
+    //createjs.Sound.play("BG");
     space = new Space();
     mainMenu = new Menu();
     stage.update();
@@ -311,6 +311,7 @@ function playButtonClicked(event: MouseEvent) {
 }
 
 function gameStart(): void {
+    stage.cursor = 'none';
     space = new Space();
     republicCoin = new Coin();
     player = new Player();
