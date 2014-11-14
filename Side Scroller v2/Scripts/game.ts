@@ -11,11 +11,13 @@ var scoreboard: Scoreboard;
 var lose: GameOver;
 var mainMenu: Menu;
 var instructions: InstructionsMenu;
+var endMenu: GameOver;
 var score;
 
 // Game Constants
 var ENEMY_NUM: number = 5;
 var GAME_FONT: string = "40px Consolas";
+var BODY_FONT: string = "30px Consolas";
 var FONT_COLOUR: string = "#FFFFFF";
 var PLAYER_LIVES: number = 3;
 
@@ -25,14 +27,14 @@ function preload(): void {
     queue.installPlugin(createjs.Sound);
     queue.addEventListener("complete", init);
     queue.loadManifest([
-        { id: "xWing", src: "images/xWing.png" },
-        { id: "logo", src: "images/republicLogo.png" },
-        { id: "tieInterceptor", src: "images/tieInterceptor.png" },
-        { id: "space", src: "images/space.png" },
-        { id: "title", src: "images/starWarsLogo.png" },
-        { id: "play", src: "images/playButton.png" },
-        { id: "instruction", src: "images/instructionsButton.png" },
-        { id: "back", src: "images/backButton.png" }
+        { id: "xWing", src: "assets/images/xWing.png" },
+        { id: "logo", src: "assets/images/republicLogo.png" },
+        { id: "tieInterceptor", src: "assets/images/tieInterceptor.png" },
+        { id: "space", src: "assets/images/space.png" },
+        { id: "title", src: "assets/images/starWarsLogo.png" },
+        { id: "play", src: "assets/images/playButton.png" },
+        { id: "instruction", src: "assets/images/instructionsButton.png" },
+        { id: "back", src: "assets/images/backButton.png" }
         //{ id: "yay", src: "sounds/yay.ogg" },
         //{ id: "thunder", src: "sounds/thunder.ogg" },
         //{ id: "engine", src: "sounds/engine.ogg" }
@@ -42,6 +44,8 @@ function preload(): void {
 function init(): void {
     stage = new createjs.Stage(document.getElementById("canvas"));
     stage.enableMouseOver(20);
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", gameLoop);
     startMenu();
 }
 
@@ -243,7 +247,7 @@ function playerAndEnemy(interceptor:Enemy) {
         scoreboard.lives -= 1;
         if (scoreboard.lives == 0) {
             //go to game over state
-            //GameOver();
+            endGame();
         }
     }
 }
@@ -318,15 +322,25 @@ function gameStart(): void {
 
 class InstructionsMenu {
     backImage: createjs.Bitmap;
+    heading: createjs.Text;
+    body1: createjs.Text;
+    body2: createjs.Text;
+    body3: createjs.Text;
+    body4: createjs.Text;
+    body5: createjs.Text;
+    body6: createjs.Text;
+    body7: createjs.Text;
+    body8: createjs.Text;
 
-    label: createjs.Text;
-    label2: createjs.Text;
-    labelString: string = "INSTRUCTIONS";
-    labelString2: string = "THE GAME WORKS LIKE DIS";
-    width: number;
-    height: number;
-    width2: number;
-    height2: number;
+    headingString: string = "INSTRUCTIONS";
+    bodyText1: string = "You are an X-Wing Pilot,";
+    bodyText2: string = "a part of Rogue Squadron.";
+    bodyText3: string = "Your goal is to safely";
+    bodyText4: string = "navigate through a mine";
+    bodyText5: string = "field of Tie Interceptors";
+    bodyText6: string = "heading in your direction.";
+    bodyText7: string = "Use the mouse to guide your";
+    bodyText8: string = "ship, it will follow you.";
     constructor() {
         var backImage = new createjs.Bitmap(queue.getResult("back"));
         backImage.x = (stage.canvas.width / 2) - (backImage.image.width / 2);
@@ -335,20 +349,44 @@ class InstructionsMenu {
 
         backImage.addEventListener("click", backClicked);
 
+        this.heading = new createjs.Text(this.headingString, GAME_FONT, FONT_COLOUR);
+        this.body1 = new createjs.Text(this.bodyText1, BODY_FONT, FONT_COLOUR);
+        this.body2 = new createjs.Text(this.bodyText2, BODY_FONT, FONT_COLOUR);
+        this.body3 = new createjs.Text(this.bodyText3, BODY_FONT, FONT_COLOUR);
+        this.body4 = new createjs.Text(this.bodyText4, BODY_FONT, FONT_COLOUR);
+        this.body5 = new createjs.Text(this.bodyText5, BODY_FONT, FONT_COLOUR);
+        this.body6 = new createjs.Text(this.bodyText6, BODY_FONT, FONT_COLOUR);
+        this.body7 = new createjs.Text(this.bodyText7, BODY_FONT, FONT_COLOUR);
+        this.body8 = new createjs.Text(this.bodyText8, BODY_FONT, FONT_COLOUR);
 
-        this.label = new createjs.Text(this.labelString, GAME_FONT, FONT_COLOUR);
+        stage.addChild(this.heading);
+        this.heading.x = (stage.canvas.width / 2) - (this.heading.getMeasuredWidth() / 2);
+        this.heading.y = 20;
+        stage.addChild(this.body1);
+        this.body1.x = (stage.canvas.width / 2) - (this.body1.getMeasuredWidth() / 2);
+        this.body1.y = 80;
+        stage.addChild(this.body2);
+        this.body2.x = (stage.canvas.width / 2) - (this.body2.getMeasuredWidth() / 2);
+        this.body2.y = 110;
+        stage.addChild(this.body3);
+        this.body3.x = (stage.canvas.width / 2) - (this.body3.getMeasuredWidth() / 2);
+        this.body3.y = 140;
+        stage.addChild(this.body4);
+        this.body4.x = (stage.canvas.width / 2) - (this.body4.getMeasuredWidth() / 2);
+        this.body4.y = 170;
+        stage.addChild(this.body5);
+        this.body5.x = (stage.canvas.width / 2) - (this.body5.getMeasuredWidth() / 2);
+        this.body5.y = 200;
+        stage.addChild(this.body6);
+        this.body6.x = (stage.canvas.width / 2) - (this.body6.getMeasuredWidth() / 2);
+        this.body6.y = 230;
+        stage.addChild(this.body7);
+        this.body7.x = (stage.canvas.width / 2) - (this.body7.getMeasuredWidth() / 2);
+        this.body7.y = 300;
+        stage.addChild(this.body8);
+        this.body8.x = (stage.canvas.width / 2) - (this.body8.getMeasuredWidth() / 2);
+        this.body8.y = 330;
 
-        this.width = this.label.getBounds().width;
-        this.height = this.label.getBounds().height;
-        this.label2 = new createjs.Text(this.labelString2, GAME_FONT, FONT_COLOUR);
-        this.width2 = this.label.getBounds().width;
-        this.height2 = this.label.getBounds().height;
-        stage.addChild(this.label);
-        this.label.x = 195;
-        this.label.y = 20;
-        stage.addChild(this.label2);
-        this.label2.x = 120;
-        this.label2.y = 70;
         stage.update();
     }
 
@@ -356,9 +394,9 @@ class InstructionsMenu {
 
 function instructionsClicked(event: MouseEvent) {
     stage.cursor = "default";
-    createjs.Sound.stop();
+    //createjs.Sound.stop();
     stage.clear();
-    createjs.Sound.play("BG");
+    //createjs.Sound.play("BG");
     space = new Space();
     instructions = new InstructionsMenu();
     stage.update();
@@ -366,42 +404,51 @@ function instructionsClicked(event: MouseEvent) {
 
 function backClicked(event: MouseEvent) {
     stage.cursor = "default";
-    createjs.Sound.stop();
+    //createjs.Sound.stop();
     stage.clear();
-    createjs.Sound.play("BG");
+    //createjs.Sound.play("BG");
     space = new Space();
     mainMenu = new startMenu();
     stage.update();
 }
 
-class GameOver {
-    label: createjs.Text;
-    label2: createjs.Text;
-    labelString: string = "GAME OVER";
-    labelString2: string = "SCORE: " + score.toString();
-    width: number;
-    height: number;
-    width2: number;
-    height2: number;
-    constructor() {
-        this.label = new createjs.Text(this.labelString, GAME_FONT, FONT_COLOUR);
+//function to open the game ending menu
+function endGame() {
+    stage.cursor = "default";
+    //createjs.Sound.stop();
+    stage.clear();
+    //createjs.Sound.play("BG");
+    space = new Space();
+    endMenu = new GameOver();
+    stage.update();
+}
 
-        this.width = this.label.getBounds().width;
-        this.height = this.label.getBounds().height;
-        this.label2 = new createjs.Text(this.labelString2, GAME_FONT, FONT_COLOUR);
-        this.width2 = this.label.getBounds().width;
-        this.height2 = this.label.getBounds().height;
-        var playButton = new createjs.Bitmap("images/playagain.png");
-        stage.addChild(playButton);
-        playButton.x = 150;
-        playButton.y = 300;
-        playButton.addEventListener("click", playButtonClicked);
-        stage.addChild(this.label);
-        this.label.x = 225;
-        this.label.y = 20;
-        stage.addChild(this.label2);
-        this.label2.x = 240;
-        this.label2.y = 70;
+class GameOver {
+    playImage: createjs.Bitmap;
+    heading: createjs.Text;
+    body: createjs.Text;
+    again: createjs.Text;
+    headingString: string = "GAME OVER";
+    bodyText: string = "SCORE: " + scoreboard.score.toString();
+    tryAgain: string = "Try Again?";
+    constructor() {
+        this.heading = new createjs.Text(this.headingString, GAME_FONT, FONT_COLOUR);
+        this.body = new createjs.Text(this.bodyText, GAME_FONT, FONT_COLOUR);
+        this.again = new createjs.Text(this.tryAgain, GAME_FONT, FONT_COLOUR);
+        stage.addChild(this.heading);
+        this.heading.x = (stage.canvas.width / 2) - (this.heading.getMeasuredWidth() / 2);
+        this.heading.y = 80;
+        stage.addChild(this.body);
+        this.body.x = (stage.canvas.width / 2) - (this.body.getMeasuredWidth() / 2);
+        this.body.y = 150;
+        stage.addChild(this.again);
+        this.again.x = (stage.canvas.width / 2) - (this.again.getMeasuredWidth() / 2);
+        this.again.y = 300;
+        var playImage = new createjs.Bitmap(queue.getResult("play"));
+        playImage.x = (stage.canvas.width / 2) - (playImage.image.width / 2);
+        playImage.y = (stage.canvas.height * 0.85) - (playImage.image.height / 2);
+        playImage.addEventListener("click", playButtonClicked);
+        stage.addChild(playImage);
         stage.update();
     }
 }

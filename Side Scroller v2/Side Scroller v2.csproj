@@ -59,20 +59,16 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="images\backButton.png" />
-    <Content Include="images\cloud.png" />
-    <Content Include="images\instructionsButton.png" />
-    <Content Include="images\playButton.png" />
-    <Content Include="images\republicLogo.png" />
-    <Content Include="images\space.png" />
-    <Content Include="images\starWarsLogo.png" />
-    <Content Include="images\tieInterceptor.png" />
-    <Content Include="images\xWing.png" />
+    <Content Include="assets\images\backButton.png" />
+    <Content Include="assets\images\instructionsButton.png" />
+    <Content Include="assets\images\playButton.png" />
+    <Content Include="assets\images\republicLogo.png" />
+    <Content Include="assets\images\space.png" />
+    <Content Include="assets\images\starWarsLogo.png" />
+    <Content Include="assets\images\tieInterceptor.png" />
+    <Content Include="assets\images\xWing.png" />
     <Content Include="Scripts\typings\createjs\createjs.d.ts" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
-    <Content Include="sounds\yay.ogg" />
-    <Content Include="sounds\engine.ogg" />
-    <Content Include="sounds\thunder.ogg" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -83,7 +79,6 @@
   <ItemGroup>
     <Content Include="css\app.css" />
     <Content Include="css\normalize.css" />
-    <Content Include="images\loading.jpg" />
     <Content Include="index.html" />
     <Content Include="packages.config" />
     <None Include="Scripts\lib\jquery-2.1.1.intellisense.js" />
@@ -109,7 +104,9 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="assets\sounds\" />
+  </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\lib\createjs-lib.d.ts" />
     <TypeScriptCompile Include="Scripts\lib\easeljs.d.ts" />
