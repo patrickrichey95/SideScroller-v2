@@ -34,10 +34,13 @@ function preload(): void {
         { id: "title", src: "assets/images/starWarsLogo.png" },
         { id: "play", src: "assets/images/playButton.png" },
         { id: "instruction", src: "assets/images/instructionsButton.png" },
-        { id: "back", src: "assets/images/backButton.png" }
-        //{ id: "yay", src: "sounds/yay.ogg" },
-        //{ id: "thunder", src: "sounds/thunder.ogg" },
-        //{ id: "engine", src: "sounds/engine.ogg" }
+        { id: "back", src: "assets/images/backButton.png" },
+        { id: "coin", src: "assets/sounds/coin.mp3" },
+        { id: "xExplode", src: "assets/sounds/X-Wing_explode.mp3" },
+        { id: "tExplode", src: "assets/sounds/TIE_fighter_explode.mp3" },
+        { id: "menu", src: "assets/sounds/pod_music.mp3" },
+        { id: "game", src: "assets/sounds/main_theme.mp3" },
+        { id: "end", src: "assets/sounds/cantina_band.mp3" }
     ]);
 }
 
@@ -45,7 +48,8 @@ function init(): void {
     stage = new createjs.Stage(document.getElementById("canvas"));
     stage.enableMouseOver(20);
     createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", gameLoop);
+    createjs.Ticker.removeEventListener("tick", gameLoop);
+    createjs.Ticker.addEventListener("tick", menuLoop);
     startMenu();
 }
 
@@ -60,6 +64,11 @@ function gameLoop(event): void {
 
     collisionCheck();
     scoreboard.update();
+    stage.update();
+}
+
+function menuLoop(event): void {
+    space.update();
     stage.update();
 }
 
@@ -226,7 +235,7 @@ function playerAndCoin() {
     point2.x = republicCoin.image.x;
     point2.y = republicCoin.image.y;
     if (distance(point1, point2) <= ((player.height * 0.5) + (republicCoin.height * 0.5))) {
-        //createjs.Sound.play("yay");
+        createjs.Sound.play("coin");
         this.republicCoin.reset();
         scoreboard.score += 100;
     }
@@ -242,7 +251,7 @@ function playerAndEnemy(interceptor:Enemy) {
     point2.y = interceptor.image.y;
 
     if (distance(point1, point2) < ((player.height * 0.5) + (interceptor.height * 0.5))) {
-        //createjs.Sound.play("thunder");
+        createjs.Sound.play("xExplode");
         interceptor.reset();
         scoreboard.lives -= 1;
         if (scoreboard.lives == 0) {
@@ -266,9 +275,11 @@ function collisionCheck() {
 //function to create the start menu
 function startMenu() {
     stage.cursor = 'default';
-    //createjs.Sound.stop();
+    createjs.Ticker.removeEventListener("tick", gameLoop);
+    createjs.Ticker.addEventListener("tick", menuLoop);
+    createjs.Sound.stop();
     stage.clear();
-    //createjs.Sound.play("BG");
+    createjs.Sound.play("menu");
     space = new Space();
     mainMenu = new Menu();
     stage.update();
@@ -306,12 +317,18 @@ function playButtonClicked(event: MouseEvent) {
     stage.removeAllEventListeners();
     stage.enableMouseOver(20);
     createjs.Ticker.setFPS(60);
+    createjs.Ticker.removeEventListener("tick", menuLoop);
     createjs.Ticker.addEventListener("tick", gameLoop);
     gameStart();
 }
 
 function gameStart(): void {
     stage.cursor = 'none';
+    createjs.Ticker.removeEventListener("tick", menuLoop);
+    createjs.Ticker.addEventListener("tick", gameLoop);
+    createjs.Sound.stop();
+    stage.clear();
+    createjs.Sound.play("game");
     space = new Space();
     republicCoin = new Coin();
     player = new Player();
@@ -390,14 +407,13 @@ class InstructionsMenu {
 
         stage.update();
     }
-
 }
 
 function instructionsClicked(event: MouseEvent) {
     stage.cursor = "default";
-    //createjs.Sound.stop();
+    createjs.Ticker.removeEventListener("tick", gameLoop);
+    createjs.Ticker.addEventListener("tick", menuLoop);
     stage.clear();
-    //createjs.Sound.play("BG");
     space = new Space();
     instructions = new InstructionsMenu();
     stage.update();
@@ -405,9 +421,9 @@ function instructionsClicked(event: MouseEvent) {
 
 function backClicked(event: MouseEvent) {
     stage.cursor = "default";
-    //createjs.Sound.stop();
+    createjs.Ticker.removeEventListener("tick", gameLoop);
+    createjs.Ticker.addEventListener("tick", menuLoop);
     stage.clear();
-    //createjs.Sound.play("BG");
     space = new Space();
     mainMenu = new startMenu();
     stage.update();
@@ -416,9 +432,11 @@ function backClicked(event: MouseEvent) {
 //function to open the game ending menu
 function endGame() {
     stage.cursor = "default";
-    //createjs.Sound.stop();
+    createjs.Ticker.removeEventListener("tick", gameLoop);
+    createjs.Ticker.addEventListener("tick", menuLoop);
+    createjs.Sound.stop();
     stage.clear();
-    //createjs.Sound.play("BG");
+    createjs.Sound.play("end");
     space = new Space();
     endMenu = new GameOver();
     stage.update();

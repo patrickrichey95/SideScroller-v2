@@ -67,6 +67,12 @@
     <Content Include="assets\images\starWarsLogo.png" />
     <Content Include="assets\images\tieInterceptor.png" />
     <Content Include="assets\images\xWing.png" />
+    <Content Include="assets\sounds\cantina_band.mp3" />
+    <Content Include="assets\sounds\coin.mp3" />
+    <Content Include="assets\sounds\main_theme.mp3" />
+    <Content Include="assets\sounds\pod_music.mp3" />
+    <Content Include="assets\sounds\TIE_fighter _explode.mp3" />
+    <Content Include="assets\sounds\X-Wing_explode.mp3" />
     <Content Include="Scripts\typings\createjs\createjs.d.ts" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <None Include="Web.Debug.config">
@@ -104,9 +110,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="assets\sounds\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\lib\createjs-lib.d.ts" />
     <TypeScriptCompile Include="Scripts\lib\easeljs.d.ts" />
