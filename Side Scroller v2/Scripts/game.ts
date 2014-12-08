@@ -1,9 +1,21 @@
-﻿var stage: createjs.Stage;
+﻿/* File: game.ts/game.js
+ * Author: Tom Tsiliopulous
+ * Last Modified By: Patrick Richey
+ * Last Modified Date: November 15, 2014
+ * Description: This file holds all the logic behind the star wars side scroller
+ * game, as well as takes care of drawing images to the screen.
+ */
+
+// Stage variables
+var stage: createjs.Stage;
 var game: createjs.Container;
 var queue;
 
 // Game Objects
 var player: Player;
+var blaster: Blaster;
+var blasters = [];
+var size = blasters.length;
 var republicCoin: Coin;
 var enemies = [];
 var space: Space;
@@ -28,6 +40,7 @@ function preload(): void {
     queue.addEventListener("complete", init);
     queue.loadManifest([
         { id: "xWing", src: "assets/images/xWing.png" },
+        { id: "blaster", src: "assets/images/blaster.png" },
         { id: "logo", src: "assets/images/republicLogo.png" },
         { id: "tieInterceptor", src: "assets/images/tieInterceptor.png" },
         { id: "space", src: "assets/images/space.png" },
@@ -37,6 +50,7 @@ function preload(): void {
         { id: "back", src: "assets/images/backButton.png" },
         { id: "coin", src: "assets/sounds/coin.mp3" },
         { id: "xExplode", src: "assets/sounds/X-Wing_explode.mp3" },
+        { id: "xFire", src: "assets/sounds/X-Wing_fire.mp3" },
         { id: "tExplode", src: "assets/sounds/TIE_fighter_explode.mp3" },
         { id: "menu", src: "assets/sounds/pod_music.mp3" },
         { id: "game", src: "assets/sounds/main_theme.mp3" },
@@ -44,6 +58,7 @@ function preload(): void {
     ]);
 }
 
+//initialize function, starts the main menu
 function init(): void {
     stage = new createjs.Stage(document.getElementById("canvas"));
     stage.enableMouseOver(20);
@@ -53,26 +68,29 @@ function init(): void {
     startMenu();
 }
 
-// Game Loop
+// Updates all game run functions
 function gameLoop(event): void {
     space.update();
     republicCoin.update();
     player.update();
+    for (var count = 0; count < blasters.length; count++) {
+        blasters[count].update();
+    }
     for (var count = 0; count < ENEMY_NUM; count++) {
         enemies[count].update();
     }
-
     collisionCheck();
     scoreboard.update();
     stage.update();
 }
 
+// updates all menu run functions
 function menuLoop(event): void {
     space.update();
     stage.update();
 }
 
-// Player Class
+// Player Class, controls information about the "avatar", X-Wing
 class Player {
     image: createjs.Bitmap;
     width: number;
@@ -92,7 +110,49 @@ class Player {
     }
 }
 
-// Coin Class
+//Blaster Class, controls information about the player's weapon
+class Blaster {
+    image: createjs.Bitmap;
+    width: number;
+    height: number;
+    dx: number;
+    constructor() {
+        this.image = new createjs.Bitmap(queue.getResult("blaster"));
+        this.width = this.image.getBounds().width;
+        this.height = this.image.getBounds().height;
+        this.image.regX = this.width * 0.5;
+        this.image.regY = this.height * 0.5;
+        this.image.x = 62;
+        this.dx = 20;
+    }
+
+    reset() {
+        stage.removeChild(this.image);
+    }
+
+    update() {
+        this.image.x += this.dx;
+        if (this.image.x >= 960) {
+            this.reset();
+        }
+    }
+}
+
+//if user clicks in game, fire blasters
+function blasterClicked(event: MouseEvent) {
+    var position = player.image.y - 33;
+    createjs.Sound.play("xFire");
+    for (var count = size + 1; count <= size + 2; count++) {
+        console.log(count);
+        blasters[count] = new Blaster();
+        blasters[count].image.y = position;
+        position += 66;
+        stage.addChild(blasters[count].image);
+    }
+    size += 2;
+}
+
+// Coin Class, for generating points
 class Coin {
     image: createjs.Bitmap;
     width: number;
@@ -121,7 +181,7 @@ class Coin {
     }
 }
 
-// Enemy Class
+// Enemy Class, Tie Interceptor -- avoid this
 class Enemy {
     image: createjs.Bitmap;
     width: number;
@@ -154,7 +214,7 @@ class Enemy {
     }
 }
 
-// Space Class
+// Space Class, scrolling background
 class Space {
     image: createjs.Bitmap;
     width: number;
@@ -181,6 +241,7 @@ class Space {
     }
 }
 
+//keeps track of players score
 class Scoreboard {
     label: createjs.Text;
     labelString: string = "";
@@ -261,6 +322,39 @@ function playerAndEnemy(interceptor:Enemy) {
     }
 }
 
+////Check collision between Blaster and Enemy
+//function blasterAndEnemy(interceptor: Enemy) {
+//    var point1: createjs.Point = new createjs.Point();
+//    var point2: createjs.Point = new createjs.Point();
+//    var point3: createjs.Point = new createjs.Point();
+//    point1.x = player.image.x;
+//    point1.y = player.image.y;
+//    point2.x = player.image.x;
+//    point2.y = player.image.y;
+//    point3.x = interceptor.image.x;
+//    point3.y = interceptor.image.y;
+
+//    if (distance(point1, point3) < ((player.height * 0.5) + (interceptor.height * 0.5))) {
+//        createjs.Sound.play("xExplode");
+//        interceptor.reset();
+//        scoreboard.lives -= 1;
+//        if (scoreboard.lives == 0) {
+//            //go to game over state
+//            endGame();
+//        }
+//    }
+
+//    if (distance(point2, point3) < ((player.height * 0.5) + (interceptor.height * 0.5))) {
+//        createjs.Sound.play("xExplode");
+//        interceptor.reset();
+//        scoreboard.lives -= 1;
+//        if (scoreboard.lives == 0) {
+//            //go to game over state
+//            endGame();
+//        }
+//    }
+//}
+
 // Collision Check Utility Function 
 function collisionCheck() {
     playerAndCoin();
@@ -312,6 +406,7 @@ class Menu {
     }
 }
 
+//if user clicks play button, start the game
 function playButtonClicked(event: MouseEvent) {
     stage.removeAllChildren();
     stage.removeAllEventListeners();
@@ -322,6 +417,7 @@ function playButtonClicked(event: MouseEvent) {
     gameStart();
 }
 
+//called by the play button, starts the game
 function gameStart(): void {
     stage.cursor = 'none';
     createjs.Ticker.removeEventListener("tick", menuLoop);
@@ -332,12 +428,15 @@ function gameStart(): void {
     space = new Space();
     republicCoin = new Coin();
     player = new Player();
+    blasters[0] = new Blaster();
+    stage.addEventListener("click", blasterClicked);
     for (var count = 0; count < ENEMY_NUM; count++) {
         enemies[count] = new Enemy();
     }
     scoreboard = new Scoreboard();
 }
 
+//includes information about controlling the game
 class InstructionsMenu {
     backImage: createjs.Bitmap;
     heading: createjs.Text;
@@ -409,6 +508,7 @@ class InstructionsMenu {
     }
 }
 
+//when instruction button is clicked, go to instructions menu
 function instructionsClicked(event: MouseEvent) {
     stage.cursor = "default";
     createjs.Ticker.removeEventListener("tick", gameLoop);
@@ -419,6 +519,7 @@ function instructionsClicked(event: MouseEvent) {
     stage.update();
 }
 
+//when back button is clicked, return to main menu
 function backClicked(event: MouseEvent) {
     stage.cursor = "default";
     createjs.Ticker.removeEventListener("tick", gameLoop);
@@ -432,6 +533,7 @@ function backClicked(event: MouseEvent) {
 //function to open the game ending menu
 function endGame() {
     stage.cursor = "default";
+    stage.removeEventListener("click", blasterClicked);
     createjs.Ticker.removeEventListener("tick", gameLoop);
     createjs.Ticker.addEventListener("tick", menuLoop);
     createjs.Sound.stop();
@@ -442,6 +544,7 @@ function endGame() {
     stage.update();
 }
 
+//shows player score, and allows restart
 class GameOver {
     playImage: createjs.Bitmap;
     heading: createjs.Text;

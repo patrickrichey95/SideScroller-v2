@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\images\backButton.png" />
+    <Content Include="assets\images\blaster.png" />
     <Content Include="assets\images\instructionsButton.png" />
     <Content Include="assets\images\playButton.png" />
     <Content Include="assets\images\republicLogo.png" />
@@ -71,8 +72,9 @@
     <Content Include="assets\sounds\coin.mp3" />
     <Content Include="assets\sounds\main_theme.mp3" />
     <Content Include="assets\sounds\pod_music.mp3" />
-    <Content Include="assets\sounds\TIE_fighter _explode.mp3" />
+    <Content Include="assets\sounds\TIE_fighter_explode.mp3" />
     <Content Include="assets\sounds\X-Wing_explode.mp3" />
+    <Content Include="assets\sounds\X-Wing_fire.mp3" />
     <Content Include="Scripts\typings\createjs\createjs.d.ts" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <None Include="Web.Debug.config">
