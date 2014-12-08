@@ -128,6 +128,7 @@ class Blaster {
 
     reset() {
         stage.removeChild(this.image);
+        this.image.y = 5000;
     }
 
     update() {
@@ -186,6 +187,7 @@ class Enemy {
     image: createjs.Bitmap;
     width: number;
     height: number;
+    hp: number = 200;
     dy: number;
     dx: number;
     constructor() {
@@ -199,6 +201,7 @@ class Enemy {
     }
 
     reset() {
+        this.hp = 200;
         this.image.x = stage.canvas.width + this.width;
         this.image.y = Math.floor(Math.random() * stage.canvas.height);
         this.dx = Math.floor(Math.random() * 5 + 5);
@@ -323,42 +326,34 @@ function playerAndEnemy(interceptor:Enemy) {
 }
 
 ////Check collision between Blaster and Enemy
-//function blasterAndEnemy(interceptor: Enemy) {
-//    var point1: createjs.Point = new createjs.Point();
-//    var point2: createjs.Point = new createjs.Point();
-//    var point3: createjs.Point = new createjs.Point();
-//    point1.x = player.image.x;
-//    point1.y = player.image.y;
-//    point2.x = player.image.x;
-//    point2.y = player.image.y;
-//    point3.x = interceptor.image.x;
-//    point3.y = interceptor.image.y;
+function blasterAndEnemy(blaster: Blaster, interceptor: Enemy) {
+    var point1: createjs.Point = new createjs.Point();
+    var point2: createjs.Point = new createjs.Point();
+    point1.x = blaster.image.x;
+    point1.y = blaster.image.y;
+    point2.x = interceptor.image.x;
+    point2.y = interceptor.image.y;
 
-//    if (distance(point1, point3) < ((player.height * 0.5) + (interceptor.height * 0.5))) {
-//        createjs.Sound.play("xExplode");
-//        interceptor.reset();
-//        scoreboard.lives -= 1;
-//        if (scoreboard.lives == 0) {
-//            //go to game over state
-//            endGame();
-//        }
-//    }
-
-//    if (distance(point2, point3) < ((player.height * 0.5) + (interceptor.height * 0.5))) {
-//        createjs.Sound.play("xExplode");
-//        interceptor.reset();
-//        scoreboard.lives -= 1;
-//        if (scoreboard.lives == 0) {
-//            //go to game over state
-//            endGame();
-//        }
-//    }
-//}
+    if (distance(point1, point2) < ((blaster.height * 0.5) + (interceptor.height * 0.5))) {
+        blaster.reset();
+        interceptor.hp -= 50;
+        if (interceptor.hp <= 0) {
+            interceptor.reset();
+            createjs.Sound.play("tExplode");
+            scoreboard.score += 50;
+        }
+        
+    }
+}
 
 // Collision Check Utility Function 
 function collisionCheck() {
     playerAndCoin();
-
+    for (var count = 0; count < ENEMY_NUM; count++) {
+        for (var count2 = 0; count2 < blasters.length; count2++) {
+            blasterAndEnemy(blasters[count2], enemies[count]);
+        }
+    }
     for (var count = 0; count < ENEMY_NUM; count++) {
         playerAndEnemy(enemies[count]);
     }
