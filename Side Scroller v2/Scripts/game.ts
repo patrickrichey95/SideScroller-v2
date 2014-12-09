@@ -26,13 +26,16 @@ var instructions: InstructionsMenu;
 var levels: LevelMenu;
 var endMenu: GameOver;
 var score;
+var enemyNum: number = 1;
+var playerLives: number = 5;
+var enemyHP: number = 100;
+var backState = 1;
 
 // Game Constants
-var ENEMY_NUM: number = 5;
 var GAME_FONT: string = "40px Consolas";
 var BODY_FONT: string = "30px Consolas";
+var DESC_FONT: string = "24px Consolas";
 var FONT_COLOUR: string = "#FFFFFF";
-var PLAYER_LIVES: number = 3;
 
 //preloads assests for game
 function preload(): void {
@@ -81,7 +84,7 @@ function gameLoop(event): void {
     for (var count = 0; count < blasters.length; count++) {
         blasters[count].update();
     }
-    for (var count = 0; count < ENEMY_NUM; count++) {
+    for (var count = 0; count < enemyNum; count++) {
         enemies[count].update();
     }
     collisionCheck();
@@ -147,7 +150,7 @@ class Blaster {
 //if user clicks in game, fire blasters
 function blasterClicked(event: MouseEvent) {
     var position = player.image.y - 33;
-    createjs.Sound.play("xFire");
+    createjs.Sound.play("xFire").volume = 0.7;
     for (var count = size + 1; count <= size + 2; count++) {
         console.log(count);
         blasters[count] = new Blaster();
@@ -192,7 +195,7 @@ class Enemy {
     image: createjs.Bitmap;
     width: number;
     height: number;
-    hp: number = 200;
+    hp: number = enemyHP;
     dy: number;
     dx: number;
     constructor() {
@@ -206,16 +209,16 @@ class Enemy {
     }
 
     reset() {
-        this.hp = 200;
+        this.hp = enemyHP;
         this.image.x = stage.canvas.width + this.width;
         this.image.y = Math.floor(Math.random() * stage.canvas.height);
-        this.dx = Math.floor(Math.random() * 5 + 5);
-        this.dy = Math.floor(Math.random() * 4 - 2);
+        this.dx = Math.floor((Math.random() * 10.5) + 10.25);
+        this.dy = Math.floor((Math.random() * 2) - 1);
     }
 
     update() {
-        this.image.y -= this.dy;
         this.image.x -= this.dx;
+        this.image.y -= this.dy;
         if (this.image.x <= (0 - this.width)) {
             this.reset();
         }
@@ -253,7 +256,7 @@ class Space {
 class Scoreboard {
     label: createjs.Text;
     labelString: string = "";
-    lives: number = PLAYER_LIVES;
+    lives: number = playerLives;
     score: number = 0;
     width: number;
     height: number;
@@ -304,7 +307,7 @@ function playerAndCoin() {
     point2.x = republicCoin.image.x;
     point2.y = republicCoin.image.y;
     if (distance(point1, point2) <= ((player.height * 0.5) + (republicCoin.height * 0.5))) {
-        createjs.Sound.play("coin");
+        createjs.Sound.play("coin").volume = 0.7;
         this.republicCoin.reset();
         scoreboard.score += 100;
     }
@@ -320,7 +323,7 @@ function playerAndEnemy(interceptor:Enemy) {
     point2.y = interceptor.image.y;
 
     if (distance(point1, point2) < ((player.height * 0.5) + (interceptor.height * 0.5))) {
-        createjs.Sound.play("xExplode");
+        createjs.Sound.play("xExplode").volume = 0.7;
         interceptor.reset();
         scoreboard.lives -= 1;
         if (scoreboard.lives == 0) {
@@ -344,7 +347,7 @@ function blasterAndEnemy(blaster: Blaster, interceptor: Enemy) {
         interceptor.hp -= 50;
         if (interceptor.hp <= 0) {
             interceptor.reset();
-            createjs.Sound.play("tExplode");
+            createjs.Sound.play("tExplode").volume = 0.7;
             scoreboard.score += 50;
         }
         
@@ -354,12 +357,12 @@ function blasterAndEnemy(blaster: Blaster, interceptor: Enemy) {
 // Collision Check Utility Function 
 function collisionCheck() {
     playerAndCoin();
-    for (var count = 0; count < ENEMY_NUM; count++) {
+    for (var count = 0; count < enemyNum; count++) {
         for (var count2 = 0; count2 < blasters.length; count2++) {
             blasterAndEnemy(blasters[count2], enemies[count]);
         }
     }
-    for (var count = 0; count < ENEMY_NUM; count++) {
+    for (var count = 0; count < enemyNum; count++) {
         playerAndEnemy(enemies[count]);
     }
 }
@@ -419,31 +422,102 @@ function playButtonClicked(event: MouseEvent) {
 
 //class to hold information about level choices
 class LevelMenu {
+    heading: createjs.Text;
     easyImage: createjs.Bitmap;
     mediumImage: createjs.Bitmap;
     hardImage: createjs.Bitmap;
+    easy1: createjs.Text;
+    easy2: createjs.Text;
+    easy3: createjs.Text;
+    medium1: createjs.Text;
+    medium2: createjs.Text;
+    medium3: createjs.Text;
+    hard1: createjs.Text;
+    hard2: createjs.Text;
+    hard3: createjs.Text;
+
+    headingString: string = "Select Difficulty";
+    easyText1: string = "5 Lives to Start";
+    easyText2: string = "Fewer Enemies";
+    easyText3: string = "Enemies have less Health";
+    mediumText1: string = "3 Lives to Start";
+    mediumText2: string = "Normal Enemies";
+    mediumText3: string = "Enemies are average";
+    hardText1: string = "1 Life Only";
+    hardText2: string = "More enemies";
+    hardText3: string = "Enemies have more Health";
     constructor() {
+        this.heading = new createjs.Text(this.headingString, GAME_FONT, FONT_COLOUR);
+        stage.addChild(this.heading);
+        this.heading.x = (stage.canvas.width / 2) - (this.heading.getMeasuredWidth() / 2);
+        this.heading.y = 20;
+
+        this.easy1 = new createjs.Text(this.easyText1, DESC_FONT, FONT_COLOUR);
+        stage.addChild(this.easy1);
+        this.easy1.x = (stage.canvas.width / 6) - (this.easy1.getMeasuredWidth() / 2);
+        this.easy1.y = 230;
+
+        this.easy2 = new createjs.Text(this.easyText2, DESC_FONT, FONT_COLOUR);
+        stage.addChild(this.easy2);
+        this.easy2.x = (stage.canvas.width / 6) - (this.easy2.getMeasuredWidth() / 2);
+        this.easy2.y = 260;
+
+        this.easy3 = new createjs.Text(this.easyText3, DESC_FONT, FONT_COLOUR);
+        stage.addChild(this.easy3);
+        this.easy3.x = (stage.canvas.width / 6) - (this.easy3.getMeasuredWidth() / 2);
+        this.easy3.y = 290;
+
+        this.medium1 = new createjs.Text(this.mediumText1, DESC_FONT, FONT_COLOUR);
+        stage.addChild(this.medium1);
+        this.medium1.x = (stage.canvas.width / 2) - (this.medium1.getMeasuredWidth() / 2);
+        this.medium1.y = 230;
+
+        this.medium2 = new createjs.Text(this.mediumText2, DESC_FONT, FONT_COLOUR);
+        stage.addChild(this.medium2);
+        this.medium2.x = (stage.canvas.width / 2) - (this.medium2.getMeasuredWidth() / 2);
+        this.medium2.y = 260;
+
+        this.medium3 = new createjs.Text(this.mediumText3, DESC_FONT, FONT_COLOUR);
+        stage.addChild(this.medium3);
+        this.medium3.x = (stage.canvas.width / 2) - (this.medium3.getMeasuredWidth() / 2);
+        this.medium3.y = 290;
+
+        this.hard1 = new createjs.Text(this.hardText1, DESC_FONT, FONT_COLOUR);
+        stage.addChild(this.hard1);
+        this.hard1.x = ((stage.canvas.width / 6) * 5) - (this.hard1.getMeasuredWidth() / 2);
+        this.hard1.y = 230;
+
+        this.hard2 = new createjs.Text(this.hardText2, DESC_FONT, FONT_COLOUR);
+        stage.addChild(this.hard2);
+        this.hard2.x = ((stage.canvas.width / 6) * 5) - (this.hard2.getMeasuredWidth() / 2);
+        this.hard2.y = 260;
+
+        this.hard3 = new createjs.Text(this.hardText3, DESC_FONT, FONT_COLOUR);
+        stage.addChild(this.hard3);
+        this.hard3.x = ((stage.canvas.width / 6) * 5) - (this.hard3.getMeasuredWidth() / 2);
+        this.hard3.y = 290;
+
         var easyImage = new createjs.Bitmap(queue.getResult("easy"));
-        easyImage.x = (stage.canvas.width / 2) - (easyImage.image.width / 2);
-        easyImage.y = (stage.canvas.height * 0.225) - (easyImage.image.height / 2);
+        easyImage.x = (stage.canvas.width / 6) - (easyImage.image.width / 2);
+        easyImage.y = 140;
         easyImage.addEventListener("click", easyButtonClicked);
         stage.addChild(easyImage);
 
         var mediumImage = new createjs.Bitmap(queue.getResult("medium"));
         mediumImage.x = (stage.canvas.width / 2) - (mediumImage.image.width / 2);
-        mediumImage.y = (stage.canvas.height * 0.4) - (mediumImage.image.height / 2);
+        mediumImage.y = 140;
         mediumImage.addEventListener("click", mediumButtonClicked);
         stage.addChild(mediumImage);
 
         var hardImage = new createjs.Bitmap(queue.getResult("hard"));
-        hardImage.x = (stage.canvas.width / 2) - (hardImage.image.width / 2);
-        hardImage.y = (stage.canvas.height * 0.575) - (hardImage.image.height / 2);
+        hardImage.x = ((stage.canvas.width / 6) * 5) - (hardImage.image.width / 2);
+        hardImage.y = 140;
         hardImage.addEventListener("click", hardButtonClicked);
         stage.addChild(hardImage);
 
         var backImage = new createjs.Bitmap(queue.getResult("back"));
         backImage.x = (stage.canvas.width / 2) - (backImage.image.width / 2);
-        backImage.y = (stage.canvas.height * 0.85) - (backImage.image.height / 2);
+        backImage.y = 390;
         backImage.addEventListener("click", backClicked);
         stage.addChild(backImage);
 
@@ -459,6 +533,9 @@ function easyButtonClicked(event: MouseEvent) {
     createjs.Ticker.setFPS(60);
     createjs.Ticker.removeEventListener("tick", menuLoop);
     createjs.Ticker.addEventListener("tick", gameLoop);
+    playerLives = 5;
+    enemyNum = 3;
+    enemyHP = 150;
     gameStart();
 }
 
@@ -470,6 +547,9 @@ function mediumButtonClicked(event: MouseEvent) {
     createjs.Ticker.setFPS(60);
     createjs.Ticker.removeEventListener("tick", menuLoop);
     createjs.Ticker.addEventListener("tick", gameLoop);
+    playerLives = 3;
+    enemyNum = 4;
+    enemyHP = 200;
     gameStart();
 }
 
@@ -481,6 +561,9 @@ function hardButtonClicked(event: MouseEvent) {
     createjs.Ticker.setFPS(60);
     createjs.Ticker.removeEventListener("tick", menuLoop);
     createjs.Ticker.addEventListener("tick", gameLoop);
+    playerLives = 1;
+    enemyNum = 5;
+    enemyHP = 250;
     gameStart();
 }
 
@@ -495,7 +578,7 @@ function gameStart(): void {
     space = new Space();
     republicCoin = new Coin();
     player = new Player();
-    for (var count = 0; count < ENEMY_NUM; count++) {
+    for (var count = 0; count < enemyNum; count++) {
         enemies[count] = new Enemy();
     }
     scoreboard = new Scoreboard();
@@ -577,6 +660,7 @@ class InstructionsMenu {
 
 //when instruction button is clicked, go to instructions menu
 function instructionsClicked(event: MouseEvent) {
+    backState = 1;
     stage.cursor = "default";
     createjs.Ticker.removeEventListener("tick", gameLoop);
     createjs.Ticker.addEventListener("tick", menuLoop);
@@ -586,19 +670,44 @@ function instructionsClicked(event: MouseEvent) {
     stage.update();
 }
 
-//when back button is clicked, return to main menu
+//when back button is clicked, return to previous menu
 function backClicked(event: MouseEvent) {
+    if (backState == 1) {
+        stage.cursor = "default";
+        createjs.Ticker.removeEventListener("tick", gameLoop);
+        createjs.Ticker.addEventListener("tick", menuLoop);
+        stage.clear();
+        space = new Space();
+        mainMenu = new Menu();
+        stage.update();
+    }
+    else {
+        stage.cursor = "default";
+        createjs.Ticker.removeEventListener("tick", gameLoop);
+        createjs.Ticker.addEventListener("tick", menuLoop);
+        stage.clear();
+        space = new Space();
+        endMenu = new GameOver();
+        stage.update();
+    }
+}
+
+//when the menu button is clicked, take user back to main menu
+function menuClicked(event: MouseEvent) {
     stage.cursor = "default";
     createjs.Ticker.removeEventListener("tick", gameLoop);
     createjs.Ticker.addEventListener("tick", menuLoop);
+    createjs.Sound.stop();
     stage.clear();
+    createjs.Sound.play("start");
     space = new Space();
-    mainMenu = new startMenu();
+    mainMenu = new Menu();
     stage.update();
 }
 
 //function to open the game ending menu
 function endGame() {
+    backState = 2;
     stage.cursor = "default";
     stage.removeEventListener("click", blasterClicked);
     createjs.Ticker.removeEventListener("tick", gameLoop);
@@ -641,7 +750,7 @@ class GameOver {
         var menuImage = new createjs.Bitmap(queue.getResult("menu"));
         menuImage.x = stage.canvas.width - (menuImage.image.width + 15);
         menuImage.y = (stage.canvas.height * 0.925) - (menuImage.image.height / 2);
-        menuImage.addEventListener("click", backClicked);
+        menuImage.addEventListener("click", menuClicked);
         stage.addChild(menuImage);
         stage.update();
     }
