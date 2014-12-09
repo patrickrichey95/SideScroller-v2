@@ -211,7 +211,7 @@ class Enemy {
     update() {
         this.image.y -= this.dy;
         this.image.x -= this.dx;
-        if (this.image.x <= 0) {
+        if (this.image.x <= (0 - this.width)) {
             this.reset();
         }
     }
@@ -423,12 +423,12 @@ function gameStart(): void {
     space = new Space();
     republicCoin = new Coin();
     player = new Player();
-    blasters[0] = new Blaster();
-    stage.addEventListener("click", blasterClicked);
     for (var count = 0; count < ENEMY_NUM; count++) {
         enemies[count] = new Enemy();
     }
     scoreboard = new Scoreboard();
+    blasters[0] = new Blaster();
+    stage.addEventListener("click", blasterClicked);
 }
 
 //includes information about controlling the game
@@ -452,7 +452,7 @@ class InstructionsMenu {
     bodyText5: string = "field of Tie Interceptors";
     bodyText6: string = "heading in your direction.";
     bodyText7: string = "Use the mouse to guide your";
-    bodyText8: string = "ship, it will follow you.";
+    bodyText8: string = "ship, click to shoot.";
     constructor() {
         var backImage = new createjs.Bitmap(queue.getResult("back"));
         backImage.x = (stage.canvas.width / 2) - (backImage.image.width / 2);

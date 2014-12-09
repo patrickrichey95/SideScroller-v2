@@ -61,7 +61,10 @@
   <ItemGroup>
     <Content Include="assets\images\backButton.png" />
     <Content Include="assets\images\blaster.png" />
+    <Content Include="assets\images\easyButton.png" />
+    <Content Include="assets\images\hardButton.png" />
     <Content Include="assets\images\instructionsButton.png" />
+    <Content Include="assets\images\mediumButton.png" />
     <Content Include="assets\images\playButton.png" />
     <Content Include="assets\images\republicLogo.png" />
     <Content Include="assets\images\space.png" />
