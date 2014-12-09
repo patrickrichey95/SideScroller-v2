@@ -23,6 +23,7 @@ var scoreboard: Scoreboard;
 var lose: GameOver;
 var mainMenu: Menu;
 var instructions: InstructionsMenu;
+var levels: LevelMenu;
 var endMenu: GameOver;
 var score;
 
@@ -47,12 +48,16 @@ function preload(): void {
         { id: "title", src: "assets/images/starWarsLogo.png" },
         { id: "play", src: "assets/images/playButton.png" },
         { id: "instruction", src: "assets/images/instructionsButton.png" },
+        { id: "easy", src: "assets/images/easyButton.png" },
+        { id: "medium", src: "assets/images/mediumButton.png" },
+        { id: "hard", src: "assets/images/hardButton.png" },
+        { id: "menu", src: "assets/images/menuButton.png" },
         { id: "back", src: "assets/images/backButton.png" },
         { id: "coin", src: "assets/sounds/coin.mp3" },
         { id: "xExplode", src: "assets/sounds/X-Wing_explode.mp3" },
         { id: "xFire", src: "assets/sounds/X-Wing_fire.mp3" },
         { id: "tExplode", src: "assets/sounds/TIE_fighter_explode.mp3" },
-        { id: "menu", src: "assets/sounds/pod_music.mp3" },
+        { id: "start", src: "assets/sounds/pod_music.mp3" },
         { id: "game", src: "assets/sounds/main_theme.mp3" },
         { id: "end", src: "assets/sounds/cantina_band.mp3" }
     ]);
@@ -368,7 +373,7 @@ function startMenu() {
     createjs.Ticker.addEventListener("tick", menuLoop);
     createjs.Sound.stop();
     stage.clear();
-    createjs.Sound.play("menu");
+    createjs.Sound.play("start");
     space = new Space();
     mainMenu = new Menu();
     stage.update();
@@ -401,8 +406,75 @@ class Menu {
     }
 }
 
-//if user clicks play button, start the game
+//when play button is clicked, go to levels menu
 function playButtonClicked(event: MouseEvent) {
+    stage.cursor = "default";
+    createjs.Ticker.removeEventListener("tick", gameLoop);
+    createjs.Ticker.addEventListener("tick", menuLoop);
+    stage.clear();
+    space = new Space();
+    levels = new LevelMenu();
+    stage.update();
+}
+
+//class to hold information about level choices
+class LevelMenu {
+    easyImage: createjs.Bitmap;
+    mediumImage: createjs.Bitmap;
+    hardImage: createjs.Bitmap;
+    constructor() {
+        var easyImage = new createjs.Bitmap(queue.getResult("easy"));
+        easyImage.x = (stage.canvas.width / 2) - (easyImage.image.width / 2);
+        easyImage.y = (stage.canvas.height * 0.225) - (easyImage.image.height / 2);
+        easyImage.addEventListener("click", easyButtonClicked);
+        stage.addChild(easyImage);
+
+        var mediumImage = new createjs.Bitmap(queue.getResult("medium"));
+        mediumImage.x = (stage.canvas.width / 2) - (mediumImage.image.width / 2);
+        mediumImage.y = (stage.canvas.height * 0.4) - (mediumImage.image.height / 2);
+        mediumImage.addEventListener("click", mediumButtonClicked);
+        stage.addChild(mediumImage);
+
+        var hardImage = new createjs.Bitmap(queue.getResult("hard"));
+        hardImage.x = (stage.canvas.width / 2) - (hardImage.image.width / 2);
+        hardImage.y = (stage.canvas.height * 0.575) - (hardImage.image.height / 2);
+        hardImage.addEventListener("click", hardButtonClicked);
+        stage.addChild(hardImage);
+
+        var backImage = new createjs.Bitmap(queue.getResult("back"));
+        backImage.x = (stage.canvas.width / 2) - (backImage.image.width / 2);
+        backImage.y = (stage.canvas.height * 0.85) - (backImage.image.height / 2);
+        backImage.addEventListener("click", backClicked);
+        stage.addChild(backImage);
+
+        stage.update();
+    }
+}
+
+//if user clicks play button, start the game
+function easyButtonClicked(event: MouseEvent) {
+    stage.removeAllChildren();
+    stage.removeAllEventListeners();
+    stage.enableMouseOver(20);
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.removeEventListener("tick", menuLoop);
+    createjs.Ticker.addEventListener("tick", gameLoop);
+    gameStart();
+}
+
+//if user clicks play button, start the game
+function mediumButtonClicked(event: MouseEvent) {
+    stage.removeAllChildren();
+    stage.removeAllEventListeners();
+    stage.enableMouseOver(20);
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.removeEventListener("tick", menuLoop);
+    createjs.Ticker.addEventListener("tick", gameLoop);
+    gameStart();
+}
+
+//if user clicks play button, start the game
+function hardButtonClicked(event: MouseEvent) {
     stage.removeAllChildren();
     stage.removeAllEventListeners();
     stage.enableMouseOver(20);
@@ -566,6 +638,11 @@ class GameOver {
         playImage.y = (stage.canvas.height * 0.85) - (playImage.image.height / 2);
         playImage.addEventListener("click", playButtonClicked);
         stage.addChild(playImage);
+        var menuImage = new createjs.Bitmap(queue.getResult("menu"));
+        menuImage.x = stage.canvas.width - (menuImage.image.width + 15);
+        menuImage.y = (stage.canvas.height * 0.925) - (menuImage.image.height / 2);
+        menuImage.addEventListener("click", backClicked);
+        stage.addChild(menuImage);
         stage.update();
     }
 }
