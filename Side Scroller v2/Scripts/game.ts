@@ -1,7 +1,7 @@
 ﻿/* File: game.ts/game.js
  * Author: Tom Tsiliopulous
  * Last Modified By: Patrick Richey
- * Last Modified Date: November 15, 2014
+ * Last Modified Date: December 11, 2014
  * Description: This file holds all the logic behind the star wars side scroller
  * game, as well as takes care of drawing images to the screen.
  */
@@ -150,7 +150,7 @@ class Blaster {
 //if user clicks in game, fire blasters
 function blasterClicked(event: MouseEvent) {
     var position = player.image.y - 33;
-    createjs.Sound.play("xFire").volume = 0.7;
+    createjs.Sound.play("xFire", "none", 0, 0, 0, 0.7, 0);
     for (var count = size + 1; count <= size + 2; count++) {
         console.log(count);
         blasters[count] = new Blaster();
@@ -307,7 +307,7 @@ function playerAndCoin() {
     point2.x = republicCoin.image.x;
     point2.y = republicCoin.image.y;
     if (distance(point1, point2) <= ((player.height * 0.5) + (republicCoin.height * 0.5))) {
-        createjs.Sound.play("coin").volume = 0.7;
+        createjs.Sound.play("coin", "none", 0, 0, 0, 1, 0);
         this.republicCoin.reset();
         scoreboard.score += 100;
     }
@@ -323,7 +323,7 @@ function playerAndEnemy(interceptor:Enemy) {
     point2.y = interceptor.image.y;
 
     if (distance(point1, point2) < ((player.height * 0.5) + (interceptor.height * 0.5))) {
-        createjs.Sound.play("xExplode").volume = 0.7;
+        createjs.Sound.play("xExplode", "none", 0, 0, 0, 0.5, 0);
         interceptor.reset();
         scoreboard.lives -= 1;
         if (scoreboard.lives == 0) {
@@ -347,7 +347,7 @@ function blasterAndEnemy(blaster: Blaster, interceptor: Enemy) {
         interceptor.hp -= 50;
         if (interceptor.hp <= 0) {
             interceptor.reset();
-            createjs.Sound.play("tExplode").volume = 0.7;
+            createjs.Sound.play("tExplode", "none", 0, 0, 0, 0.5, 0);
             scoreboard.score += 50;
         }
         
@@ -376,13 +376,13 @@ function startMenu() {
     createjs.Ticker.addEventListener("tick", menuLoop);
     createjs.Sound.stop();
     stage.clear();
-    createjs.Sound.play("start");
+    createjs.Sound.play("start", "none", 0, 0, 100, 1, 0);
     space = new Space();
     mainMenu = new Menu();
     stage.update();
 }
 
-//class to hold information about menus
+//class to hold information about the first menu
 class Menu {
     titleImage: createjs.Bitmap;
     playImage: createjs.Bitmap;
@@ -525,7 +525,7 @@ class LevelMenu {
     }
 }
 
-//if user clicks play button, start the game
+//if user clicks easy button, start the game with 'easy' parameters
 function easyButtonClicked(event: MouseEvent) {
     stage.removeAllChildren();
     stage.removeAllEventListeners();
@@ -539,7 +539,7 @@ function easyButtonClicked(event: MouseEvent) {
     gameStart();
 }
 
-//if user clicks play button, start the game
+//if user clicks medium button, start the game with 'medium' parameters
 function mediumButtonClicked(event: MouseEvent) {
     stage.removeAllChildren();
     stage.removeAllEventListeners();
@@ -553,7 +553,7 @@ function mediumButtonClicked(event: MouseEvent) {
     gameStart();
 }
 
-//if user clicks play button, start the game
+//if user clicks hard button, start the game with 'hard' parameters
 function hardButtonClicked(event: MouseEvent) {
     stage.removeAllChildren();
     stage.removeAllEventListeners();
@@ -567,14 +567,14 @@ function hardButtonClicked(event: MouseEvent) {
     gameStart();
 }
 
-//called by the play button, starts the game
+//called by the difficulty buttons, starts a new game
 function gameStart(): void {
     stage.cursor = 'none';
     createjs.Ticker.removeEventListener("tick", menuLoop);
     createjs.Ticker.addEventListener("tick", gameLoop);
     createjs.Sound.stop();
     stage.clear();
-    createjs.Sound.play("game");
+    createjs.Sound.play("game", "none", 0, 0, 100, 1, 0);
     space = new Space();
     republicCoin = new Coin();
     player = new Player();
@@ -699,7 +699,7 @@ function menuClicked(event: MouseEvent) {
     createjs.Ticker.addEventListener("tick", menuLoop);
     createjs.Sound.stop();
     stage.clear();
-    createjs.Sound.play("start");
+    createjs.Sound.play("start", "none", 0, 0, 100, 1, 0);
     space = new Space();
     mainMenu = new Menu();
     stage.update();
@@ -714,7 +714,7 @@ function endGame() {
     createjs.Ticker.addEventListener("tick", menuLoop);
     createjs.Sound.stop();
     stage.clear();
-    createjs.Sound.play("end");
+    createjs.Sound.play("end", "none", 0, 0, 100, 1, 0);
     space = new Space();
     endMenu = new GameOver();
     stage.update();
