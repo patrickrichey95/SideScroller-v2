@@ -1,9 +1,11 @@
 ﻿body {
     background-color: black;
-    padding-top: 10%;
-    padding-left: 25%;
+    overflow-x: hidden; 
+    overflow-y: auto;
 }
 
 canvas {
     border: 5px solid white;
+    display: block;
+    margin: 225px auto;
 }

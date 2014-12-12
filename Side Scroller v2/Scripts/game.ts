@@ -388,17 +388,20 @@ class Menu {
     playImage: createjs.Bitmap;
     instructionsImage: createjs.Bitmap;
     constructor() {
+        //shows the title image on the main menu
         var titleImage = new createjs.Bitmap(queue.getResult("title"));
         titleImage.x = (stage.canvas.width/2) - (titleImage.image.width/2);
         titleImage.y = (stage.canvas.height * 0.3) - (titleImage.image.height/2);
         stage.addChild(titleImage);
 
+        //large play button under title image, allows user to proceed to choosing difficulty
         var playImage = new createjs.Bitmap(queue.getResult("play"));
         playImage.x = (stage.canvas.width / 2) - (playImage.image.width / 2);
         playImage.y = (stage.canvas.height * 0.7) - (playImage.image.height / 2);
         playImage.addEventListener("click", playButtonClicked);
         stage.addChild(playImage);
 
+        //instructions button, goes to instructions page where user can read, then return with a back button click
         var instructionImage = new createjs.Bitmap(queue.getResult("instruction"));
         instructionImage.x = (stage.canvas.width / 2) - (instructionImage.image.width / 2);
         instructionImage.y = (stage.canvas.height * 0.85) - (instructionImage.image.height / 2);
@@ -436,6 +439,7 @@ class LevelMenu {
     hard2: createjs.Text;
     hard3: createjs.Text;
 
+    //hard coding the message texts into variables to display each line later, cause that was the easiest way
     headingString: string = "Select Difficulty";
     easyText1: string = "5 Lives to Start";
     easyText2: string = "Fewer Enemies";
@@ -447,6 +451,7 @@ class LevelMenu {
     hardText2: string = "More enemies";
     hardText3: string = "Enemies have more Health";
     constructor() {
+        //taking each text variable and displaying it in the level selection menu
         this.heading = new createjs.Text(this.headingString, GAME_FONT, FONT_COLOUR);
         stage.addChild(this.heading);
         this.heading.x = (stage.canvas.width / 2) - (this.heading.getMeasuredWidth() / 2);
@@ -497,6 +502,7 @@ class LevelMenu {
         this.hard3.x = ((stage.canvas.width / 6) * 5) - (this.hard3.getMeasuredWidth() / 2);
         this.hard3.y = 290;
 
+        //easy, medium, hard button to start game with different difficulties
         var easyImage = new createjs.Bitmap(queue.getResult("easy"));
         easyImage.x = (stage.canvas.width / 6) - (easyImage.image.width / 2);
         easyImage.y = 140;
@@ -515,6 +521,7 @@ class LevelMenu {
         hardImage.addEventListener("click", hardButtonClicked);
         stage.addChild(hardImage);
 
+        //back button to return to main menu
         var backImage = new createjs.Bitmap(queue.getResult("back"));
         backImage.x = (stage.canvas.width / 2) - (backImage.image.width / 2);
         backImage.y = 390;
@@ -599,6 +606,7 @@ class InstructionsMenu {
     body7: createjs.Text;
     body8: createjs.Text;
 
+    //adding strings to variables to display them individually later
     headingString: string = "INSTRUCTIONS";
     bodyText1: string = "You are an X-Wing Pilot,";
     bodyText2: string = "a part of Rogue Squadron.";
@@ -609,12 +617,12 @@ class InstructionsMenu {
     bodyText7: string = "Use the mouse to guide your";
     bodyText8: string = "ship, click to shoot.";
     constructor() {
+        //displaying back image to screen, to allow user to return to main menu
         var backImage = new createjs.Bitmap(queue.getResult("back"));
         backImage.x = (stage.canvas.width / 2) - (backImage.image.width / 2);
         backImage.y = (stage.canvas.height * 0.85) - (backImage.image.height / 2);
-        stage.addChild(backImage);
-
         backImage.addEventListener("click", backClicked);
+        stage.addChild(backImage);
 
         this.heading = new createjs.Text(this.headingString, GAME_FONT, FONT_COLOUR);
         this.body1 = new createjs.Text(this.bodyText1, BODY_FONT, FONT_COLOUR);
@@ -626,6 +634,7 @@ class InstructionsMenu {
         this.body7 = new createjs.Text(this.bodyText7, BODY_FONT, FONT_COLOUR);
         this.body8 = new createjs.Text(this.bodyText8, BODY_FONT, FONT_COLOUR);
 
+        //adding each text variable to the stage
         stage.addChild(this.heading);
         this.heading.x = (stage.canvas.width / 2) - (this.heading.getMeasuredWidth() / 2);
         this.heading.y = 20;
@@ -726,10 +735,13 @@ class GameOver {
     heading: createjs.Text;
     body: createjs.Text;
     again: createjs.Text;
+
+    //storing strings in variables to be displayed
     headingString: string = "GAME OVER";
     bodyText: string = "SCORE: " + scoreboard.score.toString();
     tryAgain: string = "Try Again?";
     constructor() {
+        //display strings to screen
         this.heading = new createjs.Text(this.headingString, GAME_FONT, FONT_COLOUR);
         this.body = new createjs.Text(this.bodyText, GAME_FONT, FONT_COLOUR);
         this.again = new createjs.Text(this.tryAgain, GAME_FONT, FONT_COLOUR);
@@ -742,6 +754,7 @@ class GameOver {
         stage.addChild(this.again);
         this.again.x = (stage.canvas.width / 2) - (this.again.getMeasuredWidth() / 2);
         this.again.y = 300;
+        //make a play button and menu button to restart the game, or return to main menu
         var playImage = new createjs.Bitmap(queue.getResult("play"));
         playImage.x = (stage.canvas.width / 2) - (playImage.image.width / 2);
         playImage.y = (stage.canvas.height * 0.85) - (playImage.image.height / 2);
